@@ -1,0 +1,61 @@
+﻿@using Microsoft.EntityFrameworkCore
+@page "/events"
+@using TheirDayBlazor.Models
+@inject NavigationManager Navigation
+@inject TheirDayBlazor.Data.AppDbContext DbContext
+
+<h1>Event Suggestions</h1>
+
+<a href="/add-event" class="btn btn-success">Add New Event</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Age Group</th>
+            <th>Price</th>
+            <th>Location</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var eventItem in events)
+        {
+            <tr>
+                <td>@eventItem.Name</td>
+                <td>@eventItem.AgeGroup</td>
+                <td>@eventItem.Price.ToString("C")</td>
+                <td>@eventItem.Location</td>
+                <td>
+                    <button class="btn btn-warning" @onclick="() => EditEvent(eventItem.Id)">Edit</button>
+                    <button class="btn btn-danger" @onclick="() => DeleteEvent(eventItem.Id)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<TheirDayBlazor.Models.Event> events = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        events = await DbContext.Events.ToListAsync();
+    }
+
+    private void EditEvent(int id)
+    {
+        Navigation.NavigateTo($"/edit-event/{id}");
+    }
+
+    private async Task DeleteEvent(int id)
+    {
+        var eventItem = await DbContext.Events.FindAsync(id);
+        if (eventItem != null)
+        {
+            DbContext.Events.Remove(eventItem);
+            await DbContext.SaveChangesAsync();
+            events.Remove(eventItem);
+        }
+    }
+}
