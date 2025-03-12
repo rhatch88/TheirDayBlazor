@@ -36,10 +36,11 @@ else
                     <td>@eventItem.Price.ToString("C")</td>
                     <td>@eventItem.Location</td>
                     <td>@(eventItem.IsOutdoor ? "Yes" : "No")</td> 
-                    <td>
+                    @* come back after everythings up and running to add edit/delete buttons
+                        <td>
                         <button class="btn btn-warning btn-sm" @onclick="() => EditEvent(eventItem.Id)">Edit</button>
                         <button class="btn btn-danger btn-sm" @onclick="() => DeleteEvent(eventItem.Id)">Delete</button>
-                    </td>
+                    </td>*@
                 </tr>
             }
         </tbody>

@@ -1,4 +1,4 @@
-﻿@page "/add-event" 
+﻿@page "/add-event"
 @using TheirDayBlazor.Models
 @inject NavigationManager Navigation
 @inject TheirDayBlazor.Data.AppDbContext DbContext
@@ -12,30 +12,30 @@
     </div>
 }
 
-<form @onsubmit="SaveEvent">
+<form @onsubmit.prevent="SaveEvent">
     <div class="form-group">
-        <label>Name</label>
-        <input @bind="newEvent.Name" class="form-control" required />
+        <label for="eventName">Name</label>
+        <input id="eventName" name="eventName" @bind="newEvent.Name" class="form-control" required />
     </div>
 
     <div class="form-group">
-        <label>Age Group</label>
-        <input @bind="newEvent.AgeGroup" class="form-control" required />
+        <label for="eventAgeGroup">Age Group</label>
+        <input id="eventAgeGroup" name="eventAgeGroup" @bind="newEvent.AgeGroup" class="form-control" required />
     </div>
 
     <div class="form-group">
-        <label>Price</label>
-        <input @bind="newEvent.Price" type="number" step="0.01" class="form-control" required />
+        <label for="eventPrice">Price</label>
+        <input id="eventPrice" name="eventPrice" @bind="newEvent.Price" type="number" step="0.01" class="form-control" required />
     </div>
 
     <div class="form-group">
-        <label>Location</label>
-        <input @bind="newEvent.Location" class="form-control" required />
+        <label for="eventLocation">Location</label>
+        <input id="eventLocation" name="eventLocation" @bind="newEvent.Location" class="form-control" required />
     </div>
 
     <div class="form-group">
-        <label>Outdoor Event?</label>
-        <input @bind="newEvent.IsOutdoor" type="checkbox" />
+        <label for="eventIsOutdoor">Outdoor Event?</label>
+        <input id="eventIsOutdoor" name="eventIsOutdoor" @bind="newEvent.IsOutdoor" type="checkbox" />
     </div>
 
     <button type="submit" class="btn btn-primary">Save Event</button>
@@ -48,11 +48,41 @@
 
     private async Task SaveEvent()
     {
+        Console.WriteLine("SaveEvent method called");
+
+        if (DbContext == null)
+        {
+            Console.WriteLine("DbContext is null");
+            return;
+        }
+
+        try
+        {
+            DbContext.Events.Add(newEvent);
+            Console.WriteLine($"Saving: {newEvent.Name}, {newEvent.AgeGroup}, {newEvent.Price}, {newEvent.Location}, {newEvent.IsOutdoor}");
+
+            await DbContext.SaveChangesAsync();
+            isSaved = true;
+            newEvent = new TheirDayBlazor.Models.Event(); // Reset form
+
+            Console.WriteLine("Event saved successfully!");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving event: {ex.Message}");
+        }
+    }
+}
+
+
+
+    @*COMMENTED OUT CODE BELOW TO TEST IF THE ABOVE CODE WORKS
+        
         DbContext.Events.Add(newEvent);
         await DbContext.SaveChangesAsync();
         isSaved = true;
         newEvent = new TheirDayBlazor.Models.Event(); // Reset form
     }
 }
-
+        *@
 
